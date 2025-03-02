@@ -1,0 +1,81 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Ignore IntelliJ IDEA-specific files
+.idea/
+
+# Ignore build artifacts
+/build/
+.gradle/
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
+*.swn
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled bytecode & class files
+target/
+*.class
+
+# Ignore dependency caches
+.mvn/
+!gradle/wrapper/gradle-wrapper.properties
+
+# Ignore test reports
+test-output/
+surefire-reports/
+
+# Ignore local environment files
+.env
+*.env.local
+
+# Ignore Spring Boot properties with sensitive data (optional)
+application.properties
+application.yml
+application-dev.properties
+application-dev.yml
+
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
