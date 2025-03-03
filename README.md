@@ -24,7 +24,7 @@ Run this, on your IDE's terminal or cmd in you machine, However I'm using Intell
 git clone https://github.com/mrkathrotiya/AVA-Acquire-Variety-Assets-.git
 
 2️⃣ Configure Database
-Update application.properties (or application.yml) with your MySQL credentials:
+Update application.properties (or application.yml) with your MySQL credentials: <br />
 
 spring.datasource.url=jdbc:mysql://localhost:3306/avadb(your database schema name) <br />
 spring.datasource.username=root <br />
