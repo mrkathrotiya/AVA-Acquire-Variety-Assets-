@@ -47,13 +47,4 @@ public class UserController {
         return ResponseEntity.ok(existingUser);
     }
 
-    @GetMapping("/profile/get-Interested")
-    public ResponseEntity<List<Property>> getInterestedPropertyList(@RequestHeader("Authorization") String token) throws Exception {
-        Objects.requireNonNull(token);
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-        return ResponseEntity.ok(userService.getInterestedList(token));
-    }
-
 }
