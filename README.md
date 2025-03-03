@@ -4,7 +4,7 @@
 AVA is a real estate property management platform that allows sellers to list properties and buyers to express interest in properties. The system includes role-based authentication, property management, and user interactions.
 
 ## 🚀 Features
-- 🏠 Property listing (Land, Shop, Flat, House)
+- 🏠 Property listing (Land, Shop, Flat, House) \n
 - 🛡️ Role-based authentication (Buyers, Sellers, Both) ADMIN(In future)
 - 🔍 Search & filter properties (Currentlty not implemented)
 - ⭐ Interested property list for users
@@ -37,7 +37,7 @@ JWT Token: Used for securing API endpoints
 
 Other API endpoints:
 
-User:
+User: \n
 GET :- /user/profile               :- Retrieve User profile
 PUT :- /user/update                :- Update User
 GET :- /profile/get-Interested     :- Retrieve List of Interested property list from user
