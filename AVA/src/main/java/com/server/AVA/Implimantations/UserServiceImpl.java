@@ -81,4 +81,13 @@ public class UserServiceImpl implements UserService {
         Optional<Seller> seller = sellerRepository.getSellerByUserId(userId);
         seller.ifPresent(sellerRepository::delete);
     }
+
+    @Override
+    public void removePropertyFromAllUserList(Long propertyId){
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            user.getInterestedList().removeIf(p -> p.getId().equals(propertyId));
+            userRepository.save(user);
+        }
+    }
 }

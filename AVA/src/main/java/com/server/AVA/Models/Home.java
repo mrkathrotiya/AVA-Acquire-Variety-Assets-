@@ -39,7 +39,7 @@ public class Home {
     @Enumerated(EnumType.STRING)
     private FurnitureType furnitureType;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "home_sizes",
             joinColumns = @JoinColumn(name = "home_id"),
             inverseJoinColumns = @JoinColumn(name = "sizes_id"))

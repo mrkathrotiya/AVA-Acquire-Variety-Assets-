@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -71,6 +72,18 @@ public class PropertyController {
         if (token.startsWith("Bearer ")) {
             token = Objects.requireNonNull(token.substring(7));
         }
-        return ResponseEntity.ok(propertyService.getInterestedList(token));
+            return ResponseEntity.ok(propertyService.getInterestedList(token));
+    }
+
+    @DeleteMapping("/delete/{propertyId}")
+    @Transactional
+    public ResponseEntity<String> deleteProperty(@RequestHeader("Authorization") String token,
+                                                           @PathVariable Long propertyId) throws Exception{
+        if (token.startsWith("Bearer ")) {
+            token = Objects.requireNonNull(token.substring(7));
+        }
+        propertyService.deleteProperty(token,propertyId);
+        return ResponseEntity.ok("Deleted..");
     }
 }
+

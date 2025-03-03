@@ -14,4 +14,5 @@ public interface PropertyService {
     List<PropertyResponse> addToInterestedList(String token, Long propertyId) throws Exception;
     List<PropertyResponse> removeFromInterestedList(String token, Long propertyId) throws Exception;
     List<PropertyResponse> getInterestedList(String token) throws Exception;
+    void deleteProperty(String token, Long propertyId) throws Exception;
 }

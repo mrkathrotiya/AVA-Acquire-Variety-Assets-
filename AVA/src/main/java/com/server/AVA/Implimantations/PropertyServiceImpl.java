@@ -33,7 +33,6 @@ public class PropertyServiceImpl implements PropertyService {
     private final SellerRepository sellerRepository;
     private final AddressRepository addressRepository;
     private final InsightsRepository insightsRepository;
-
     //helpers
     private final PropertyHelper propertyHelper;
     @Override
@@ -123,12 +122,54 @@ public class PropertyServiceImpl implements PropertyService {
         return convertToPropertyResponseList(user.getInterestedList());
     }
 
-    private void handlePropertyType(CreatePropertyDTO createPropertyDTO, PropertyDTO propertyDTO, Property property) {
+    @Override
+    @Transactional
+    public void deleteProperty(String token, Long propertyId) throws Exception {
+        log.info("SERVICE: Entered to delete property");
 
+        User user = userService.getUser(token);
+        log.info("SERVICE: User retrieved");
+
+        Seller seller = sellerRepository.getSellerByUserId(user.getId())
+                .orElseThrow(() -> new UsernameNotFoundException("You are not a seller!"));
+        log.info("SERVICE: Seller retrieved");
+
+        Property property = getPropertyById(propertyId);
+        log.info("SERVICE: Property retrieved");
+
+        if (seller.getSellList().contains(property)) {
+            seller.getSellList().remove(property);
+            log.info("SERVICE: Property removed from seller's list");
+        } else {
+            log.warn("SERVICE: Property was not found in seller's list");
+        }
+
+        sellerRepository.save(seller);
+        log.info("SERVICE: Seller updated");
+
+        if (property.getAddress() != null) {
+            addressRepository.deleteById(property.getAddress().getId());
+            log.info("SERVICE: Address deleted");
+        }
+
+        if (property.getInsights() != null) {
+            insightsRepository.delete(property.getInsights());
+            log.info("SERVICE: Insights deleted");
+        }
+
+        userService.removePropertyFromAllUserList(property.getId());
+
+        handleDeleteProperty(property);
+
+        log.info("SERVICE: Property deleted successfully");
+    }
+
+
+    private void handlePropertyType(CreatePropertyDTO createPropertyDTO, PropertyDTO propertyDTO, Property property) {
         switch (propertyDTO.getPropertyType()) {
             case Land:
                 log.info("Save land called");
-                saveOrDeleteLand(createPropertyDTO.getLandDTO(), property.getId());
+                saveLand(createPropertyDTO.getLandDTO(), property.getId());
                 break;
             case Shop:
                 log.info("save shop called");
@@ -145,7 +186,44 @@ public class PropertyServiceImpl implements PropertyService {
         }
     }
 
-    private void saveOrDeleteLand(LandDTO landDTO, Long propertyId) {
+    @Transactional
+    private void handleDeleteProperty(Property property) throws Exception {
+        if (property == null) {
+            log.warn("SERVICE: Received null property for deletion");
+            return;
+        }
+
+        log.info("SERVICE: Entered to handle deletion for property ID: {}", property.getId());
+
+        switch (property.getPropertyType()) {
+            case Land:
+                log.info("Deleting land...");
+                deleteLand(property.getId());
+                break;
+            case Shop:
+                log.info("Deleting shop...");
+                deleteShop(property.getId());
+                break;
+            case Flat:
+                log.info("Deleting flat...");
+                deleteFlat(property.getId());
+                break;
+            case House:
+                log.info("Deleting house...");
+                deleteHouse(property.getId());
+                break;
+            default:
+                log.warn("SERVICE: Unknown property type: {}", property.getPropertyType());
+                throw new IllegalArgumentException("Unknown property type: " + property.getPropertyType());
+        }
+
+        log.info("Deleting property from database...");
+        propertyRepository.deleteById(property.getId());
+
+        log.info("Successfully deleted property ID: {}", property.getId());
+    }
+
+    private void saveLand(LandDTO landDTO, Long propertyId) {
         log.info("Entered to save land");
 
         Land land = new Land();
@@ -205,7 +283,6 @@ public class PropertyServiceImpl implements PropertyService {
             Sizes sizes = new Sizes();
             Optional.ofNullable(sizeDTO.getHomeAreaType()).ifPresent(sizes::setHomeAreaType);
             Optional.ofNullable(sizeDTO.getSize()).ifPresent(sizes::setSize);
-            sizes.setPropertyId(propertyId);
             return sizes;
         }).collect(Collectors.toList());
 
@@ -224,6 +301,74 @@ public class PropertyServiceImpl implements PropertyService {
 
         return homeRepository.save(home);
     }
+
+    @Transactional
+    private void deleteLand(Long propertyId) {
+        landRepository.findByPropertyId(propertyId)
+                .ifPresentOrElse(landRepository::delete,
+                        () -> log.warn("No land found for propertyId: {}", propertyId));
+    }
+
+    @Transactional
+    private void deleteShop(Long propertyId) {
+        shopRepository.findByPropertyId(propertyId)
+                .ifPresentOrElse(shopRepository::delete,
+                        () -> log.warn("No shop found for propertyId: {}", propertyId));
+    }
+
+    @Transactional
+    private void deleteHouse(Long propertyId) throws Exception {
+        House house = getHouseByPropertyId(propertyId);
+        if (house == null) {
+            log.warn("No house found for propertyId: {}", propertyId);
+            return;
+        }
+
+        if (house.getHome() != null) {
+            deleteHome(house.getHome().getId());
+        } else {
+            log.warn("House with ID {} does not have an associated Home.", house.getId());
+        }
+
+        houseRepository.deleteById(house.getId());
+        log.info("House with ID {} deleted successfully.", house.getId());
+    }
+
+    @Transactional
+    private void deleteFlat(Long propertyId) throws Exception {
+        log.info("Entered to delete flat");
+        Flat flat = getFlatByPropertyId(propertyId);
+        log.info("flat retrieved");
+        if (flat == null) {
+            log.warn("No flat found for propertyId: {}", propertyId);
+            return;
+        }
+
+        if (flat.getHome() != null) {
+            deleteHome(flat.getHome().getId());
+        } else {
+            log.warn("Flat with ID {} does not have an associated Home.", flat.getId());
+        }
+
+        flatRepository.deleteById(flat.getId());
+        log.info("Flat with ID {} deleted successfully.", flat.getId());
+    }
+
+    @Transactional
+    private void deleteHome(Long homeId) throws Exception {
+        log.info("Entered to delete home");
+        if (!homeRepository.existsById(homeId)) {
+            log.warn("Home with ID {} not found.", homeId);
+            return;
+        }
+        log.info("home exists");
+
+        homeRepository.deleteById(homeId);
+        log.info("home deleted");
+
+        log.info("Home with ID {} deleted successfully.", homeId);
+    }
+
 
     private Land getLandByPropertyId(Long propertyId) {
         log.info("Entered to get land method");

@@ -14,8 +14,6 @@ public class Sizes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "property_id")
-    private Long propertyId;
 
     @Enumerated(EnumType.STRING)
     private HomeAreaType homeAreaType;

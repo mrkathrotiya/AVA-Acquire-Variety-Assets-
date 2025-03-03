@@ -11,4 +11,5 @@ public interface UserService {
     User updateUser(String token, UpdateUserDTO updateUserDTO) throws Exception;
     List<Property> getInterestedList(String token) throws Exception;
     User saveUser(User user);
+    void removePropertyFromAllUserList(Long propertyId);
 }
