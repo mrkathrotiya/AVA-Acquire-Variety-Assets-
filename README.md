@@ -7,7 +7,7 @@ AVA is a real estate property management platform that allows sellers to list pr
 - 🏠 Property listing (Land, Shop, Flat, House) 
 - 🛡️ Role-based authentication (Buyers, Sellers, Both) ADMIN(In future)
 - 🔍 Search & filter properties (Currentlty not implemented)
-- 🔼 Assert/Property updation
+- 🔼 Asset/Property updation
 - ⭐ Interested property list for users
 - 🗑️ Property deletion with automatic cleanup
 - 📊 Insights and analytics
