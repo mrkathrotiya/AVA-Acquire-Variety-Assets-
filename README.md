@@ -3,13 +3,14 @@
 ## 📌 Overview
 AVA is a real estate property management platform that allows sellers to list properties and buyers to express interest in properties. The system includes role-based authentication, property management, and user interactions.
 
-## 🚀 Features
+## 🚀 Current Features
 - 🏠 Property listing (Land, Shop, Flat, House) 
 - 🛡️ Role-based authentication (Buyers, Sellers, Both) ADMIN(In future)
 - 🔍 Search & filter properties (Currentlty not implemented)
 - ⭐ Interested property list for users
 - 🗑️ Property deletion with automatic cleanup
 - 📊 Insights and analytics
+- And More features will be added!
 
 ## 🛠️ Technologies Used
 - **Backend:** Java, Spring Boot, Hibernate, JWT Authentication
