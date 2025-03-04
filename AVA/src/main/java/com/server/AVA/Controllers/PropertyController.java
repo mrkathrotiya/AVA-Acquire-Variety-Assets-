@@ -1,16 +1,17 @@
 package com.server.AVA.Controllers;
 
-import com.server.AVA.Models.DTOs.PropertyDTOs.CreatePropertyDTO;
-import com.server.AVA.Models.DTOs.PropertyDTOs.LandDTO;
-import com.server.AVA.Models.DTOs.PropertyDTOs.PropertyDTO;
-import com.server.AVA.Models.DTOs.PropertyDTOs.PropertyResponse;
+import com.server.AVA.Models.DTOs.PropertyDTOs.*;
 import com.server.AVA.Models.Property;
 import com.server.AVA.Models.Seller;
+import com.server.AVA.Models.Sizes;
 import com.server.AVA.Models.User;
 import com.server.AVA.Repos.SellerRepository;
+import com.server.AVA.Repos.SizesRepository;
 import com.server.AVA.Services.PropertyService;
+import com.server.AVA.Services.PropertyTypeServices.SizesService;
 import com.server.AVA.Services.UserService;
 import lombok.AllArgsConstructor;
+import org.hibernate.engine.jdbc.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -85,5 +86,15 @@ public class PropertyController {
         propertyService.deleteProperty(token,propertyId);
         return ResponseEntity.ok("Deleted..");
     }
+
+    @PutMapping("/update/{propertyId}")
+    @Transactional
+    public ResponseEntity<PropertyResponse> updateProperty(@PathVariable Long propertyId,
+                                                           @RequestBody UpdatePropertyDTO updatePropertyDTO) throws Exception {
+        return ResponseEntity.ok(propertyService.updateProperty(propertyId,
+                updatePropertyDTO));
+    }
+
+
 }
 
