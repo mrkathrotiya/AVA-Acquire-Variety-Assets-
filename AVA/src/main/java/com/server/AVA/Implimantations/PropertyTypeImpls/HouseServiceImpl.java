@@ -68,4 +68,18 @@ public class HouseServiceImpl implements HouseService {
         houseRepository.deleteById(house.getId());
         log.info("House with ID {} deleted successfully.", house.getId());
     }
+
+    @Override
+    public void updateHouse(HouseDTO houseDTO, Long propertyId) throws Exception {
+        log.info("HOUSE SERVICE: Entered to update house!");
+        House house = getHouseByPropertyId(propertyId);
+        log.info("FLAT SERVICE: House fetched!");
+        Optional.ofNullable(houseDTO.getFloors()).ifPresent(house::setFloors);
+        Optional.ofNullable(houseDTO.getGarageSize()).ifPresent(house::setGarageSize);
+        Optional.ofNullable(houseDTO.getIsGarage()).ifPresent(house::setIsGarage);
+        if (houseDTO.getHomeDTO() != null){
+            house.setHome(homeService.updateHome(houseDTO.getHomeDTO(),house.getHome().getId()));
+        }
+        houseRepository.save(house);
+    }
 }

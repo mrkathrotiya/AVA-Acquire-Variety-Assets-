@@ -288,7 +288,7 @@ public class PropertyServiceImpl implements PropertyService {
                 break;
             case House:
                 log.info("Updating house...");
-
+                houseService.updateHouse(updatePropertyDTO.getHouseDTO(), property.getId());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown property type: " + property.getPropertyType());
@@ -314,15 +314,8 @@ public class PropertyServiceImpl implements PropertyService {
                 propertyResponse.setShopDTO(propertyHelper.convertShopToDTO(shopService.getShopByPropertyId(property.getId())));
                 break;
             case Flat:
-                try {
-                    log.info("Entered to convert flat");
-                    Flat flat = flatService.getFlatByPropertyId(property.getId());
-                    log.info("Flat retrieved: {}", flat);
-                    propertyResponse.setFlatDTO(propertyHelper.convertFlatToDTO(flat));
-                    log.info("Flat DTO set successfully");
-                } catch (Exception e) {
-                    log.error("Error while converting flat", e);
-                }
+                log.info("Entered to convert flat");
+                propertyResponse.setFlatDTO(propertyHelper.convertFlatToDTO(flatService.getFlatByPropertyId(property.getId())));
                 break;
             case House:
                 propertyResponse.setHouseDTO(propertyHelper.convertHouseToDTO(houseService.getHouseByPropertyId(property.getId())));

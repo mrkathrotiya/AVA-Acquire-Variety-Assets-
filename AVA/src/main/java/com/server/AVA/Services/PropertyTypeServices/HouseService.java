@@ -9,4 +9,5 @@ public interface HouseService {
     House getHouseByPropertyId(Long propertyId) throws Exception;
     void saveHouse(HouseDTO houseDTO, Long propertyId) throws Exception;
     void deleteHouse(Long propertyId) throws Exception;
+    void updateHouse(HouseDTO houseDTO, Long propertyId) throws Exception;
 }
