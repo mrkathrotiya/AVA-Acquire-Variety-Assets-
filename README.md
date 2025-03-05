@@ -6,6 +6,7 @@ AVA is a real estate property management platform that allows sellers to list pr
 ## 🚀 Current Features
 - 🏠 Property listing (Land, Shop, Flat, House) 
 - 🛡️ Role-based authentication (Buyers, Sellers, Both) ADMIN(In future)
+- 🛡️ Oauth2 with google
 - 🔍 Search & filter properties (Currentlty not implemented)
 - 🔼 Asset/Property updation
 - ⭐ Interested property list for users
@@ -70,5 +71,6 @@ You can showcase your skill by optimizing authentication by, <br />
           - Optimizing Controller's or service's method <br />
           - Optimizing Relationships between Entities <br />
 
-NOTE:- Make sure you prints a Logs at every action you take, it will save your vast amount of time when error or bug occurs.
+NOTE:- Make sure you prints a Logs at every action you take if you are not familier with dubugging, it will save your vast amount of time when error or bug occurs.
       - You can see example of logs in every Service's methods like add property, get property.
+      - If you not know how to dubeg, learn it! (recommanded)
