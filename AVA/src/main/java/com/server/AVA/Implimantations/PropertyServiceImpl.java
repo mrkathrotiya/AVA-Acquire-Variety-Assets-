@@ -13,7 +13,6 @@ import com.server.AVA.Services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -202,6 +200,12 @@ public class PropertyServiceImpl implements PropertyService {
         propertyRepository.save(property);
         log.info("Successfully Updated property ID: {}", property.getId());
         return getPropertyResponse(property);
+    }
+
+    @Override
+    public List<PropertyResponse> getList(Long price, Boolean forSell) throws Exception {
+        List<Property> propertyList = propertyRepository.getPropertiesByFilter(price,forSell);
+        return convertToPropertyResponseList(propertyList);
     }
 
 

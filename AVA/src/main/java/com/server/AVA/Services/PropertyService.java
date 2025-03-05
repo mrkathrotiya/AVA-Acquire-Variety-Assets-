@@ -17,4 +17,5 @@ public interface PropertyService {
     List<PropertyResponse> getInterestedList(String token) throws Exception;
     void deleteProperty(String token, Long propertyId) throws Exception;
     PropertyResponse updateProperty(Long propertyId, UpdatePropertyDTO updatePropertyDTO) throws Exception;
+    List<PropertyResponse> getList(Long price,Boolean forSell) throws Exception;
 }

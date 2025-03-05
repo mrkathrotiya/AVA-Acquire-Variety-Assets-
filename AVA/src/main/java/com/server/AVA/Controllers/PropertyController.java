@@ -5,6 +5,7 @@ import com.server.AVA.Models.Property;
 import com.server.AVA.Models.Seller;
 import com.server.AVA.Models.Sizes;
 import com.server.AVA.Models.User;
+import com.server.AVA.Repos.PropertyRepository;
 import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.SizesRepository;
 import com.server.AVA.Services.PropertyService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -93,6 +95,15 @@ public class PropertyController {
                                                            @RequestBody UpdatePropertyDTO updatePropertyDTO) throws Exception {
         return ResponseEntity.ok(propertyService.updateProperty(propertyId,
                 updatePropertyDTO));
+    }
+
+    @GetMapping("/get-list/{price}/{forSell}")
+    @Transactional
+    public ResponseEntity<List<PropertyResponse>> getList(@PathVariable Long price,
+                                                          @PathVariable Boolean forSell) throws Exception {
+        return ResponseEntity.ok(propertyService.getList(price,forSell));
+
+
     }
 
 
