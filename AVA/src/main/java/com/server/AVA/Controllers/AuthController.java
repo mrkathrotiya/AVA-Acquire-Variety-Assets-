@@ -34,9 +34,9 @@ public class AuthController {
         return ResponseEntity.ok(loginResponseDTO);
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<String> getName() throws Exception{
-        return ResponseEntity.ok("Manthan");
+    @GetMapping("/google/callback")
+    public ResponseEntity<?> handleGoogleCallback(@RequestParam String code ) throws Exception{
+        return authService.googleCallback(code);
     }
 
 }
