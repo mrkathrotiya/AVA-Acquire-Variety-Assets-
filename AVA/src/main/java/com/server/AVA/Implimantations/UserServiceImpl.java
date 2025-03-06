@@ -1,6 +1,7 @@
 package com.server.AVA.Implimantations;
 
 import com.server.AVA.Config.JwtService;
+import com.server.AVA.Models.DTOs.UserDTOs.UpdateCredentials;
 import com.server.AVA.Models.DTOs.UserDTOs.UpdateUserDTO;
 import com.server.AVA.Models.Property;
 import com.server.AVA.Models.Seller;
@@ -9,6 +10,7 @@ import com.server.AVA.Models.enums.Role;
 import com.server.AVA.Repos.BuyerRepository;
 import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.UserRepository;
+import com.server.AVA.Services.MailService;
 import com.server.AVA.Services.PropertyService;
 import com.server.AVA.Services.UserService;
 import lombok.AllArgsConstructor;
@@ -27,12 +29,18 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final SellerRepository sellerRepository;
+    private final MailService mailService;
 
     @Override
     public User getUser(String token) throws Exception{
         Objects.requireNonNull(token, "Token cannot be null!");
 
         String email = jwtService.extractUsername(token);
+        return findByEmail(email);
+    }
+
+    @Override
+    public User findByEmail(String email) throws Exception {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
@@ -72,6 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User saveUser(User user) {
         if (user != null) return userRepository.save(user);
         return null;
@@ -89,5 +98,15 @@ public class UserServiceImpl implements UserService {
             user.getInterestedList().removeIf(p -> p.getId().equals(propertyId));
             userRepository.save(user);
         }
+    }
+
+    @Override
+    public String updateCredentials(String token, UpdateCredentials updateCredentials) throws Exception {
+        //Email should not be null un update credential object
+        User user = getUser(token);
+        Optional.ofNullable(updateCredentials.getEmail()).ifPresent(user::setEmail);
+        user = saveUser(user);
+
+        return jwtService.generateToken(user);
     }
 }

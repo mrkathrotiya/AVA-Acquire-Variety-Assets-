@@ -3,27 +3,22 @@ package com.server.AVA.Implimantations;
 import com.server.AVA.Config.JwtService;
 import com.server.AVA.Helpers.AddressHelper;
 import com.server.AVA.Models.*;
-import com.server.AVA.Models.DTOs.AddressDTO.AddressDTO;
 import com.server.AVA.Models.DTOs.AuthDTOs.LoginDTO;
 import com.server.AVA.Models.DTOs.AuthDTOs.RegisterUserDTO;
+import com.server.AVA.Models.DTOs.UserDTOs.UpdateCredentials;
 import com.server.AVA.Models.DTOs.UserDTOs.UserResponseDTO;
 import com.server.AVA.Models.enums.Role;
 import com.server.AVA.Repos.AddressRepository;
 import com.server.AVA.Repos.BuyerRepository;
 import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.UserRepository;
-import com.server.AVA.Services.AuthService;
-import com.server.AVA.Services.UserDetailServiceImpl;
+import com.server.AVA.Services.*;
 import lombok.AllArgsConstructor;
-import org.hibernate.action.internal.CollectionAction;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,11 +31,13 @@ import java.util.*;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final AddressRepository addressRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final SellerRepository sellerRepository;
     private final BuyerRepository buyerRepository;
     private final AuthenticationManager authManager;
     private final PasswordEncoder passwordEncoder;
+    private final OTPService otpService;
+    private final MailService mailService;
     private final JwtService jwtService;
     private final AddressHelper addressHelper;
     private final RestTemplate restTemplate;
@@ -72,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         user.setAddress(address);
         addressRepository.save(address);
 
-        userRepository.save(user);
+        userService.saveUser(user);
 
         if (user.getRoles().contains(Role.SELLER)) {
             Seller seller = new Seller();
@@ -112,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
                         loginDTO.getPassword()
                 )
         );
-        return userRepository.findByEmail(loginDTO.getEmail()).orElseThrow();
+        return userService.findByEmail(loginDTO.getEmail());
     }
 
     @Override
@@ -153,7 +150,7 @@ public class AuthServiceImpl implements AuthService {
                     user.setRoles(roles);
                     user.setInterestedList(new ArrayList<>());
                     user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
-                    user = userRepository.save(user);
+                    user = userService.saveUser(user);
                     Buyer buyer = new Buyer();
                     buyer.setUser(user);
                     buyerRepository.save(buyer);
@@ -165,6 +162,29 @@ public class AuthServiceImpl implements AuthService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    public String requestOTP(String token) throws Exception {
+        User user = userService.getUser(token);
+        String currentEmail = user.getEmail();
+        String otp = otpService.generateOTP(currentEmail);
+        mailService.sendOtpMail(currentEmail,"Update Credentials",otp);
+        return "OTP sent to your registered email: "+currentEmail;
+    }
+
+    @Override
+    public String verifyOTP(String token, String OTP, UpdateCredentials updateCredentials) throws Exception {
+        User user = userService.getUser(token);
+        String currentEmail = user.getEmail();
+
+        if (otpService.validateOTP(currentEmail,OTP)){
+            String newToken = userService.updateCredentials(token,updateCredentials);
+            otpService.deleteOTP(currentEmail);
+            return newToken;
+        }else {
+            return "Invalid OTP, Please try again!";
         }
     }
 }
