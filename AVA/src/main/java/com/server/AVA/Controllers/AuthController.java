@@ -22,6 +22,7 @@ public class AuthController {
      private final AuthService authService;
      private final JwtService jwtService;
 
+
     @PostMapping("/signup")
     public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDTO registerUserDTO) throws Exception {
         UserResponseDTO userResponseDTO = authService.registerUser(registerUserDTO);
