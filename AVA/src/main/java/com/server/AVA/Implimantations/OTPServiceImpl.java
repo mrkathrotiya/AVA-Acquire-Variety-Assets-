@@ -26,11 +26,12 @@ public class OTPServiceImpl implements OTPService {
     public boolean validateOTP(String email, String OTP) {
         String storedOtp = redisTemplate.opsForValue().get(email);
         return storedOtp.equals(OTP);
-
     }
 
     @Override
     public void deleteOTP(String email) {
         redisTemplate.delete(email);
     }
+
+
 }

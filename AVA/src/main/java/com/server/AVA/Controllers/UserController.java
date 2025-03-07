@@ -2,6 +2,7 @@ package com.server.AVA.Controllers;
 
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.server.AVA.Config.JwtService;
+import com.server.AVA.Models.DTOs.UserDTOs.UpdateCredentials;
 import com.server.AVA.Models.DTOs.UserDTOs.UpdateUserDTO;
 import com.server.AVA.Models.Property;
 import com.server.AVA.Models.User;
@@ -23,8 +24,6 @@ import java.util.Objects;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
 
     @GetMapping("/profile")
     public ResponseEntity<User> getUser(@RequestHeader("Authorization") String token) throws Exception{
@@ -45,6 +44,26 @@ public class UserController {
         }
         User existingUser = userService.updateUser(token,updateUserDTO);
         return ResponseEntity.ok(existingUser);
+    }
+
+    @GetMapping("/request-otp")
+    public ResponseEntity<String> requestOTP(@RequestHeader("Authorization") String token) throws Exception {
+        if (token.startsWith("Bearer ")) {
+            token = Objects.requireNonNull(token.substring(7));
+        }
+        String response = userService.requestOTP(token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-and-update")
+    public ResponseEntity<String> verifyAndUpdate(@RequestHeader("Authorization") String token,
+                                                  @RequestParam String OTP,
+                                                  @RequestBody UpdateCredentials updateCredentials) throws Exception {
+        if (token.startsWith("Bearer ")) {
+            token = Objects.requireNonNull(token.substring(7));
+        }
+        String response = userService.verifyOTP(token,OTP,updateCredentials);
+        return ResponseEntity.ok(response);
     }
 
 }

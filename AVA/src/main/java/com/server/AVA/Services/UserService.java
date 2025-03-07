@@ -15,4 +15,6 @@ public interface UserService {
     User saveUser(User user);
     void removePropertyFromAllUserList(Long propertyId);
     String updateCredentials(String token, UpdateCredentials updateCredentials) throws Exception;
+    String requestOTP(String token) throws Exception;
+    String verifyOTP(String token, String OTP, UpdateCredentials updateCredentials) throws Exception;
 }

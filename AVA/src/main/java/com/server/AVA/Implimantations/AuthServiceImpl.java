@@ -166,25 +166,36 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String requestOTP(String token) throws Exception {
-        User user = userService.getUser(token);
-        String currentEmail = user.getEmail();
-        String otp = otpService.generateOTP(currentEmail);
-        mailService.sendOtpMail(currentEmail,"Update Credentials",otp);
-        return "OTP sent to your registered email: "+currentEmail;
+    public Map<String, String> sendOTP(String email) throws Exception {
+        User user = userService.findByEmail(email);
+        Map<String,String> response = new HashMap<>();
+        if (user!=null){
+            String otp = otpService.generateOTP(email);
+            String currentMail = user.getEmail();
+            mailService.sendOtpMail(currentMail,"Login OTP", otp);
+            response.put("Login OTP sent to your mail Id: ", currentMail);
+        }else {
+            response.put("User not found with: ",email);
+        }
+        return response;
     }
 
     @Override
-    public String verifyOTP(String token, String OTP, UpdateCredentials updateCredentials) throws Exception {
-        User user = userService.getUser(token);
-        String currentEmail = user.getEmail();
-
-        if (otpService.validateOTP(currentEmail,OTP)){
-            String newToken = userService.updateCredentials(token,updateCredentials);
-            otpService.deleteOTP(currentEmail);
-            return newToken;
-        }else {
-            return "Invalid OTP, Please try again!";
+    public String verifyUser(String email, String otp) {
+        try {
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                return "User not found!";
+            }
+            if (otpService.validateOTP(email, otp)) {
+                otpService.deleteOTP(email);
+                return jwtService.generateToken(user);
+            } else {
+                return "OTP is incorrect, please try again!";
+            }
+        } catch (Exception e) {
+            return "An error occurred while verifying OTP: " + e.getMessage();
         }
     }
+
 }

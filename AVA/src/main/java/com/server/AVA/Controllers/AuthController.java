@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -43,22 +44,14 @@ public class AuthController {
     }
 
     @GetMapping("/request-otp")
-    public ResponseEntity<String> requestOTP(@RequestHeader("Authorization") String token) throws Exception {
-        if (token.startsWith("Bearer ")) {
-            token = Objects.requireNonNull(token.substring(7));
-        }
-        String response = authService.requestOTP(token);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String,String>> requestOTP(@RequestParam String email) throws Exception {
+        return ResponseEntity.ok(authService.sendOTP(email));
     }
 
-    @PostMapping("/verify-and-update")
-    public ResponseEntity<String> verifyAndUpdate(@RequestHeader("Authorization") String token,
-                                                  @RequestParam String OTP,
-                                                  @RequestBody UpdateCredentials updateCredentials) throws Exception {
-        if (token.startsWith("Bearer ")) {
-            token = Objects.requireNonNull(token.substring(7));
-        }
-        String response = authService.verifyOTP(token,OTP,updateCredentials);
-        return ResponseEntity.ok(response);
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyUser(@RequestParam String email,
+                                             @RequestParam String otp) throws Exception {
+        return ResponseEntity.ok(authService.verifyUser(email, otp));
     }
+
 }

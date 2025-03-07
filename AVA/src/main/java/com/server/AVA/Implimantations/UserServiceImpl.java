@@ -11,6 +11,7 @@ import com.server.AVA.Repos.BuyerRepository;
 import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.UserRepository;
 import com.server.AVA.Services.MailService;
+import com.server.AVA.Services.OTPService;
 import com.server.AVA.Services.PropertyService;
 import com.server.AVA.Services.UserService;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final SellerRepository sellerRepository;
     private final MailService mailService;
+    private final OTPService otpService;
 
     @Override
     public User getUser(String token) throws Exception{
@@ -108,5 +110,28 @@ public class UserServiceImpl implements UserService {
         user = saveUser(user);
 
         return jwtService.generateToken(user);
+    }
+
+    @Override
+    public String requestOTP(String token) throws Exception {
+        User user = getUser(token);
+        String currentEmail = user.getEmail();
+        String otp = otpService.generateOTP(currentEmail);
+        mailService.sendOtpMail(currentEmail,"Update Credentials",otp);
+        return "OTP sent to your registered email: "+currentEmail;
+    }
+
+    @Override
+    public String verifyOTP(String token, String OTP, UpdateCredentials updateCredentials) throws Exception {
+        User user = getUser(token);
+        String currentEmail = user.getEmail();
+
+        if (otpService.validateOTP(currentEmail,OTP)){
+            String newToken = updateCredentials(token,updateCredentials);
+            otpService.deleteOTP(currentEmail);
+            return newToken;
+        }else {
+            return "Invalid OTP, Please try again!";
+        }
     }
 }
