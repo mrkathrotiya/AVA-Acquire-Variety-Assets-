@@ -46,11 +46,12 @@ public class User implements UserDetails {
     @JoinColumn(name = "address_id", referencedColumnName = "id", unique = true)
     private Address address;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @ManyToMany
     @JoinTable(name = "user_property",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "property_id"))
     private List<Property> interestedList;
+
 
 
     @Override

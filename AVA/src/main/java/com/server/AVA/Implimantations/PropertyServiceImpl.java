@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,11 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAddress(addressRepository.save(address));
         log.info("address saved and assigned to property");
 
-        property.setInsights(insightsRepository.save(new Insights())); // Ensure Insights is saved
+        Insights insights = new Insights();
+        insights.setInterested(0);
+        insights.setViews(0);
+        insights.setCallCount(0);
+        property.setInsights(insightsRepository.save(insights)); // Ensure Insights is saved
         log.info("insights assigned to property");
 
         property = propertyRepository.save(property); // Save Property to get ID
@@ -103,6 +108,9 @@ public class PropertyServiceImpl implements PropertyService {
 
         if (!user.getInterestedList().contains(property)) {
             user.getInterestedList().add(property);
+            Optional.ofNullable(property.getInsights())
+                    .ifPresent(insights -> insights.setInterested(insights.getInterested() + 1));
+            propertyRepository.save(property);
         }
 
         user = userService.saveUser(user);
@@ -111,11 +119,24 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    @Transactional
     public List<PropertyResponse> removeFromInterestedList(String token, Long propertyId) throws Exception {
         User user = userService.getUser(token);
         Property property = getPropertyById(propertyId);
-        user.getInterestedList().remove(property);
-        user = userService.saveUser(user);
+
+        if (property == null) {
+            throw new ChangeSetPersister.NotFoundException();
+        }
+
+        user.getInterestedList().removeIf(p -> p.getId().equals(propertyId));
+
+        if (property.getInsights() != null) {
+            property.getInsights().setInterested(Math.max(0, property.getInsights().getInterested() - 1));
+            propertyRepository.save(property);
+        }
+
+        user=userService.saveUser(user);
+
         return convertToPropertyResponseList(user.getInterestedList());
     }
 

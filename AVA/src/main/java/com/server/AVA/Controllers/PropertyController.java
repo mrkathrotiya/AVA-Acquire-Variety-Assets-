@@ -61,7 +61,7 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.addToInterestedList(token,propertyId));
     }
 
-    @DeleteMapping("/delete-from-interested-list/{propertyId}")
+    @PutMapping("/delete-from-interested-list/{propertyId}")
     public ResponseEntity<List<PropertyResponse>> removeFromInterestedList(@RequestHeader("Authorization") String token,
                                                                            @PathVariable Long propertyId) throws Exception{
         if (token.startsWith("Bearer ")) {
