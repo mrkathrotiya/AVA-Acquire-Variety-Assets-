@@ -102,8 +102,24 @@ public class PropertyController {
     public ResponseEntity<List<PropertyResponse>> getList(@PathVariable Long price,
                                                           @PathVariable Boolean forSell) throws Exception {
         return ResponseEntity.ok(propertyService.getList(price,forSell));
+    }
 
+    @PutMapping("/increase-call-count/{propertyId}")
+    public ResponseEntity<String> addCallCount(@PathVariable Long propertyId) throws Exception{
+        if (propertyId != 0){
+            propertyService.addCallCount(propertyId);
+            return ResponseEntity.ok("Increased!");
+        }
+        return ResponseEntity.badRequest().body("PropertyId should not be 0");
+    }
 
+    @PutMapping("/increase-view-count/{propertyId}")
+    public ResponseEntity<String> addViewCount(@PathVariable Long propertyId) throws Exception{
+        if (propertyId != 0){
+            propertyService.addViewCount(propertyId);
+            return ResponseEntity.ok("Increased!");
+        }
+        return ResponseEntity.badRequest().body("PropertyId should not be 0");
     }
 
 

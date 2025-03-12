@@ -5,10 +5,7 @@ import com.server.AVA.Models.DTOs.PropertyDTOs.*;
 import com.server.AVA.Helpers.PropertyHelper;
 import com.server.AVA.Repos.*;
 import com.server.AVA.Services.PropertyService;
-import com.server.AVA.Services.PropertyTypeServices.FlatService;
-import com.server.AVA.Services.PropertyTypeServices.HouseService;
-import com.server.AVA.Services.PropertyTypeServices.LandService;
-import com.server.AVA.Services.PropertyTypeServices.ShopService;
+import com.server.AVA.Services.PropertyTypeServices.*;
 import com.server.AVA.Services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -36,7 +33,7 @@ public class PropertyServiceImpl implements PropertyService {
     private final UserService userService;
     private final SellerRepository sellerRepository;
     private final AddressRepository addressRepository;
-    private final InsightsRepository insightsRepository;
+    private final InsightsService insightsService;
     //helpers
     private final PropertyHelper propertyHelper;
     @Override
@@ -65,7 +62,7 @@ public class PropertyServiceImpl implements PropertyService {
         insights.setInterested(0);
         insights.setViews(0);
         insights.setCallCount(0);
-        property.setInsights(insightsRepository.save(insights)); // Ensure Insights is saved
+        property.setInsights(insightsService.saveInsights(insights)); // Ensure Insights is saved
         log.info("insights assigned to property");
 
         property = propertyRepository.save(property); // Save Property to get ID
@@ -108,8 +105,9 @@ public class PropertyServiceImpl implements PropertyService {
 
         if (!user.getInterestedList().contains(property)) {
             user.getInterestedList().add(property);
-            Optional.ofNullable(property.getInsights())
-                    .ifPresent(insights -> insights.setInterested(insights.getInterested() + 1));
+            // Optional.ofNullable(property.getInsights())
+              //      .ifPresent(insights -> insights.setInterested(insights.getInterested() + 1));
+            insightsService.addInterestedCount(property.getInsights().getId());
             propertyRepository.save(property);
         }
 
@@ -131,7 +129,8 @@ public class PropertyServiceImpl implements PropertyService {
         user.getInterestedList().removeIf(p -> p.getId().equals(propertyId));
 
         if (property.getInsights() != null) {
-            property.getInsights().setInterested(Math.max(0, property.getInsights().getInterested() - 1));
+            //property.getInsights().setInterested(Math.max(0, property.getInsights().getInterested() - 1));
+            insightsService.subtractInterestedCount(property.getInsights().getId());
             propertyRepository.save(property);
         }
 
@@ -177,7 +176,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         if (property.getInsights() != null) {
-            insightsRepository.delete(property.getInsights());
+            insightsService.deleteInsights(property.getInsights());
             log.info("SERVICE: Insights deleted");
         }
 
@@ -229,6 +228,17 @@ public class PropertyServiceImpl implements PropertyService {
         return convertToPropertyResponseList(propertyList);
     }
 
+    @Override
+    public void addCallCount(Long propertyId) throws Exception {
+        Property property = Objects.requireNonNull(getPropertyById(propertyId));
+        insightsService.addCallCount(Objects.requireNonNull(property.getInsights().getId()));
+    }
+
+    @Override
+    public void addViewCount(Long propertyId) throws Exception {
+        Property property = Objects.requireNonNull(getPropertyById(propertyId));
+        insightsService.addViewCount(Objects.requireNonNull(property.getInsights().getId()));
+    }
 
     private void handleSavePropertyType(CreatePropertyDTO createPropertyDTO, PropertyDTO propertyDTO, Property property) throws Exception {
         switch (propertyDTO.getPropertyType()) {
