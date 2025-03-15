@@ -26,10 +26,10 @@ public class builderGroup {
     @JoinColumn(name = "address_id", referencedColumnName = "id", unique = true)
     private Address address;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "builder_group_property",
             joinColumns = @JoinColumn(name = "builderGroup_id"),
             inverseJoinColumns = @JoinColumn(name = "property_id"))
-    private List<Property> interestedList;
+    private List<Property> propertyList;
 
 }
