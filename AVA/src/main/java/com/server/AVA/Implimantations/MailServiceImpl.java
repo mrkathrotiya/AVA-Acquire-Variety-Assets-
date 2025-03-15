@@ -28,4 +28,18 @@ public class MailServiceImpl implements MailService {
             log.error("Exception while send mail",e);
         }
     }
+
+    @Override
+    public void sendConfirmationMail(String to) {
+        try {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setTo(to);
+            mailMessage.setSubject("Registration confirmed!");
+            mailMessage.setText("You recently registered to AVA with mail Id: "+to);
+            javaMailSender.send(mailMessage);
+        }catch (Exception e){
+            log.error("Exception while sending confirmation mail!");
+        }
+
+    }
 }

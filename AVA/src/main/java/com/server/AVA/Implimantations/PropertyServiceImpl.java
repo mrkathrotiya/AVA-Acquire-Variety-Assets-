@@ -4,6 +4,7 @@ import com.server.AVA.Models.*;
 import com.server.AVA.Models.DTOs.PropertyDTOs.*;
 import com.server.AVA.Helpers.PropertyHelper;
 import com.server.AVA.Repos.*;
+import com.server.AVA.Services.AsyncService;
 import com.server.AVA.Services.PropertyService;
 import com.server.AVA.Services.PropertyTypeServices.*;
 import com.server.AVA.Services.UserService;
@@ -34,49 +35,39 @@ public class PropertyServiceImpl implements PropertyService {
     private final SellerRepository sellerRepository;
     private final AddressRepository addressRepository;
     private final InsightsService insightsService;
+    private final AsyncService asyncService;
     //helpers
     private final PropertyHelper propertyHelper;
     @Override
+    @Transactional
     public PropertyDTO createProperty(String token, CreatePropertyDTO createPropertyDTO) throws Exception {
         Objects.requireNonNull(token);
         PropertyDTO propertyDTO = Objects.requireNonNull(createPropertyDTO.getPropertyDTO());
-        log.info("property DTO created!");
 
         User user = userService.getUser(token);
-        log.info("User retrieved");
 
         Seller seller = sellerRepository.getSellerByUserId(user.getId())
                 .orElseThrow(() -> new UsernameNotFoundException("You are unauthorized to sell!"));
-        log.info("Seller assigned!");
 
         Property property = propertyHelper.mapPropertyDTOToEntity(propertyDTO);
-        log.info("property converted");
 
         Address address = propertyHelper.mapAddressDTOToEntity(propertyDTO.getAddressDTO());
-        log.info("address converted");
 
         property.setAddress(addressRepository.save(address));
-        log.info("address saved and assigned to property");
 
         Insights insights = new Insights();
         insights.setInterested(0);
         insights.setViews(0);
         insights.setCallCount(0);
         property.setInsights(insightsService.saveInsights(insights)); // Ensure Insights is saved
-        log.info("insights assigned to property");
+
 
         property = propertyRepository.save(property); // Save Property to get ID
-        log.info("property saved to DB");
-
-
-        log.info("Handle property called");
         handleSavePropertyType(createPropertyDTO, propertyDTO, property);
 
         seller.getSellList().add(property);
-        log.info("property added to seller's sell list");
 
         sellerRepository.save(seller);
-        log.info("seller saved to DB");
         return propertyHelper.convertPropertyToDTO(property);
     }
 

@@ -14,6 +14,8 @@ import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.UserRepository;
 import com.server.AVA.Services.*;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +32,7 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
     private final AddressRepository addressRepository;
     private final UserService userService;
     private final SellerRepository sellerRepository;
@@ -42,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
     private final AddressHelper addressHelper;
     private final RestTemplate restTemplate;
     private final UserDetailServiceImpl userDetailService;
+    private final AsyncService asyncService;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
@@ -69,7 +73,10 @@ public class AuthServiceImpl implements AuthService {
         user.setAddress(address);
         addressRepository.save(address);
 
-        userService.saveUser(user);
+        user=userService.saveUser(user);
+
+        asyncService.sendConfirmationMail(user.getEmail());
+        log.info("Code execution continues! ");
 
         if (user.getRoles().contains(Role.SELLER)) {
             Seller seller = new Seller();
