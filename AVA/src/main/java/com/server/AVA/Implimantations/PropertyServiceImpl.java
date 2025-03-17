@@ -7,13 +7,18 @@ import com.server.AVA.Repos.*;
 import com.server.AVA.Services.AsyncService;
 import com.server.AVA.Services.PropertyService;
 import com.server.AVA.Services.PropertyTypeServices.*;
+import com.server.AVA.Services.RedisService;
 import com.server.AVA.Services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +40,7 @@ public class PropertyServiceImpl implements PropertyService {
     private final SellerRepository sellerRepository;
     private final AddressRepository addressRepository;
     private final InsightsService insightsService;
-    private final AsyncService asyncService;
+    private final RedisService redisService;
     //helpers
     private final PropertyHelper propertyHelper;
     @Override
@@ -45,37 +50,40 @@ public class PropertyServiceImpl implements PropertyService {
         PropertyDTO propertyDTO = Objects.requireNonNull(createPropertyDTO.getPropertyDTO());
 
         User user = userService.getUser(token);
-
         Seller seller = sellerRepository.getSellerByUserId(user.getId())
                 .orElseThrow(() -> new UsernameNotFoundException("You are unauthorized to sell!"));
 
         Property property = propertyHelper.mapPropertyDTOToEntity(propertyDTO);
-
         Address address = propertyHelper.mapAddressDTOToEntity(propertyDTO.getAddressDTO());
-
         property.setAddress(addressRepository.save(address));
-
         Insights insights = new Insights();
         insights.setInterested(0);
         insights.setViews(0);
         insights.setCallCount(0);
-        property.setInsights(insightsService.saveInsights(insights)); // Ensure Insights is saved
+        property.setInsights(insightsService.saveInsights(insights));
+        property = propertyRepository.save(property);
 
-
-        property = propertyRepository.save(property); // Save Property to get ID
         handleSavePropertyType(createPropertyDTO, propertyDTO, property);
-
         seller.getSellList().add(property);
-
         sellerRepository.save(seller);
         return propertyHelper.convertPropertyToDTO(property);
     }
 
     @Override
+    @Async("customThreadPool")
     public Property getPropertyById(Long propertyId) throws Exception {
-        Objects.requireNonNull(propertyId);
-        return propertyRepository.findById(propertyId)
-                .orElseThrow(()-> new EntityNotFoundException("Property not found with this id: "+propertyId));
+        Property property = redisService.get(propertyId,Property.class);
+        if (property != null){
+            return property;
+        }
+        else {
+            Objects.requireNonNull(propertyId);
+            Property property1 = propertyRepository.findById(propertyId).orElseThrow(() -> new EntityNotFoundException("not found!!"));
+            if (property1 != null) {
+                redisService.set(Objects.requireNonNull(property1.getId()), property1, 300L);
+            }
+            return property1;
+        }
     }
 
     @Override
@@ -363,6 +371,4 @@ public class PropertyServiceImpl implements PropertyService {
         }
         return list;
     }
-
-
 }

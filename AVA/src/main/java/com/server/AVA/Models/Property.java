@@ -3,16 +3,18 @@ package com.server.AVA.Models;
 import com.server.AVA.Models.enums.AreaType;
 import com.server.AVA.Models.enums.PropertyType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.cache.annotation.Cacheable;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-public class Property {
+@Data
+public class Property{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

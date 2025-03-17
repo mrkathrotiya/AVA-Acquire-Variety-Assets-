@@ -1,23 +1,23 @@
 package com.server.AVA;
 
-import com.server.AVA.Implimantations.MailServiceImpl;
 import com.server.AVA.Services.MailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class EmailServiceTest {
+public class RedisTest {
     @Autowired
-    private MailService mailService;
+    private RedisTemplate redisTemplate;
 
     @Test
     void SendMailTest(){
-        mailService.sendMail("email address where you want to send",
-                "Testing java mail sender",
-                "Hi how are you");
+        //redisTemplate.opsForValue().set("email","abc@gmail.com");
+        Object o=redisTemplate.opsForValue().get("name");
+        int a = 1;
     }
 }

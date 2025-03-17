@@ -2,6 +2,7 @@ package com.server.AVA.Implimantations;
 
 import com.server.AVA.Services.MailService;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
