@@ -1,12 +1,10 @@
 package com.server.AVA.Models.DTOs.PropertyDTOs;
 
 import com.server.AVA.Models.enums.LandType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class ShopDTO {
     private Integer area;

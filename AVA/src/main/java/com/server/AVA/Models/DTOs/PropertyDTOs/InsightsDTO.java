@@ -1,10 +1,9 @@
 package com.server.AVA.Models.DTOs.PropertyDTOs;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class InsightsDTO {
     private Integer views;
 

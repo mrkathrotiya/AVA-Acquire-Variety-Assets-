@@ -2,14 +2,12 @@ package com.server.AVA.Models.DTOs.PropertyDTOs;
 
 import com.server.AVA.Models.enums.FurnitureType;
 import com.server.AVA.Models.enums.GardenType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class HomeDTO {
     private Integer area;

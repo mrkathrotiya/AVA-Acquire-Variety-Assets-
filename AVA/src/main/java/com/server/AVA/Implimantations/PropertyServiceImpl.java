@@ -72,7 +72,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Async("customThreadPool")
     public Property getPropertyById(Long propertyId) throws Exception {
-        Property property = redisService.get(propertyId,Property.class);
+        Property property = redisService.get(String.valueOf(propertyId),Property.class);
         if (property != null){
             return property;
         }
@@ -80,7 +80,7 @@ public class PropertyServiceImpl implements PropertyService {
             Objects.requireNonNull(propertyId);
             Property property1 = propertyRepository.findById(propertyId).orElseThrow(() -> new EntityNotFoundException("not found!!"));
             if (property1 != null) {
-                redisService.set(Objects.requireNonNull(property1.getId()), property1, 300L);
+                redisService.set(Objects.requireNonNull(String.valueOf(property1.getId())), property1, 300L);
             }
             return property1;
         }
@@ -88,12 +88,17 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public PropertyResponse getWholePropertyById(Long propertyId) throws Exception {
-        log.info("SERVICE: Entered to property service.");
-        log.info("SERVICE: Starting to fetch property..");
-        Property property = getPropertyById(propertyId);
-        log.info("SERVICE: Property fetched!");
-        log.info("SERVICE: Entering to helper..");
-        return getPropertyResponse(property);
+        PropertyResponse propertyResponse= redisService.get("WP"+propertyId,PropertyResponse.class);
+        if (propertyResponse != null) return  propertyResponse;
+        else {
+            Property property = getPropertyById(propertyId);
+            if (property != null) {
+                PropertyResponse propertyResponse1 = getPropertyResponse(property);
+                redisService.set("WP"+propertyId,propertyResponse1,300L);
+                return propertyResponse1;
+            }
+            return null;
+        }
     }
 
     @Override

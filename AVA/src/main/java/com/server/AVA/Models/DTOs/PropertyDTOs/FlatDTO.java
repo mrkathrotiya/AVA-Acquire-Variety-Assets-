@@ -1,12 +1,10 @@
 package com.server.AVA.Models.DTOs.PropertyDTOs;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class FlatDTO {
     private Short floorNo;
     private Boolean isElevator;

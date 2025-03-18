@@ -11,6 +11,7 @@ import com.server.AVA.Repos.ShopRepository;
 import com.server.AVA.Services.PropertyTypeServices.FlatService;
 import com.server.AVA.Services.PropertyTypeServices.HomeService;
 import com.server.AVA.Services.PropertyTypeServices.ShopService;
+import com.server.AVA.Services.RedisService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class FlatServiceImpl implements FlatService {
     private static final Logger log = LoggerFactory.getLogger(FlatServiceImpl.class);
     private final FlatRepository flatRepository;
     private final HomeService homeService;
+    private final RedisService redisService;
 
     @Override
     public Flat getFlatByPropertyId(Long propertyId) throws Exception {
