@@ -1,4 +1,4 @@
-package com.server.AVA.Implimantations.PropertyTypeImpls;
+package com.server.AVA.Implementations.PropertyTypeImpls;
 
 import com.server.AVA.Models.DTOs.PropertyDTOs.LandDTO;
 import com.server.AVA.Models.Land;

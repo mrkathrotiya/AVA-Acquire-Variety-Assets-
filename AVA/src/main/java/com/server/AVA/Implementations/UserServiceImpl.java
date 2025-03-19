@@ -1,4 +1,4 @@
-package com.server.AVA.Implimantations;
+package com.server.AVA.Implementations;
 
 import com.server.AVA.Config.JwtService;
 import com.server.AVA.Models.DTOs.UserDTOs.UpdateCredentials;
@@ -7,12 +7,10 @@ import com.server.AVA.Models.Property;
 import com.server.AVA.Models.Seller;
 import com.server.AVA.Models.User;
 import com.server.AVA.Models.enums.Role;
-import com.server.AVA.Repos.BuyerRepository;
 import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.UserRepository;
 import com.server.AVA.Services.MailService;
 import com.server.AVA.Services.OTPService;
-import com.server.AVA.Services.PropertyService;
 import com.server.AVA.Services.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;

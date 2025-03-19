@@ -1,16 +1,11 @@
-package com.server.AVA.Implimantations.PropertyTypeImpls;
+package com.server.AVA.Implementations.PropertyTypeImpls;
 
-import com.server.AVA.Models.DTOs.PropertyDTOs.FlatDTO;
 import com.server.AVA.Models.DTOs.PropertyDTOs.HomeDTO;
 import com.server.AVA.Models.DTOs.PropertyDTOs.SizeDTO;
-import com.server.AVA.Models.Flat;
 import com.server.AVA.Models.Home;
 import com.server.AVA.Models.Sizes;
-import com.server.AVA.Repos.FlatRepository;
 import com.server.AVA.Repos.HomeRepository;
-import com.server.AVA.Services.PropertyTypeServices.FlatService;
 import com.server.AVA.Services.PropertyTypeServices.HomeService;
-import com.server.AVA.Services.PropertyTypeServices.SizesService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,7 +17,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

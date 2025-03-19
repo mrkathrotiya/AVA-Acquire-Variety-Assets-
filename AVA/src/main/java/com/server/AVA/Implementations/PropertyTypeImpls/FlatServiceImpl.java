@@ -1,16 +1,11 @@
-package com.server.AVA.Implimantations.PropertyTypeImpls;
+package com.server.AVA.Implementations.PropertyTypeImpls;
 
 import com.server.AVA.Models.DTOs.PropertyDTOs.FlatDTO;
-import com.server.AVA.Models.DTOs.PropertyDTOs.LandDTO;
-import com.server.AVA.Models.DTOs.PropertyDTOs.ShopDTO;
 import com.server.AVA.Models.Flat;
 import com.server.AVA.Models.Home;
-import com.server.AVA.Models.Shop;
 import com.server.AVA.Repos.FlatRepository;
-import com.server.AVA.Repos.ShopRepository;
 import com.server.AVA.Services.PropertyTypeServices.FlatService;
 import com.server.AVA.Services.PropertyTypeServices.HomeService;
-import com.server.AVA.Services.PropertyTypeServices.ShopService;
 import com.server.AVA.Services.RedisService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

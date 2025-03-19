@@ -1,4 +1,4 @@
-package com.server.AVA.Implimantations.PropertyTypeImpls;
+package com.server.AVA.Implementations.PropertyTypeImpls;
 
 import com.server.AVA.Models.DTOs.PropertyDTOs.SizeDTO;
 import com.server.AVA.Models.Sizes;
@@ -13,7 +13,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

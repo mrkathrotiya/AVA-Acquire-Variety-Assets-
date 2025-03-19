@@ -52,7 +52,7 @@ dependencies {
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 	implementation 'mysql:mysql-connector-java:8.0.33'
 
-    //hibernate
+	//hibernate
 	implementation 'org.hibernate:hibernate-core:6.6.11.Final'
 
 	//for JWT
@@ -67,6 +67,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-hibernate-6:3.23.5'
+
+	//AOP
+	implementation 'org.aspectj:aspectjweaver:1.9.23'
+	implementation 'org.aspectj:aspectjrt:1.9.23'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {

@@ -1,4 +1,4 @@
-package com.server.AVA.Implimantations;
+package com.server.AVA.Implementations;
 
 import com.server.AVA.Services.OTPService;
 import lombok.AllArgsConstructor;

@@ -1,10 +1,9 @@
-package com.server.AVA.Implimantations;
+package com.server.AVA.Implementations;
 
 import com.server.AVA.Models.*;
 import com.server.AVA.Models.DTOs.PropertyDTOs.*;
 import com.server.AVA.Helpers.PropertyHelper;
 import com.server.AVA.Repos.*;
-import com.server.AVA.Services.AsyncService;
 import com.server.AVA.Services.PropertyService;
 import com.server.AVA.Services.PropertyTypeServices.*;
 import com.server.AVA.Services.RedisService;
@@ -12,13 +11,9 @@ import com.server.AVA.Services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

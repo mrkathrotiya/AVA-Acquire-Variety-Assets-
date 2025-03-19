@@ -1,4 +1,4 @@
-package com.server.AVA.Implimantations;
+package com.server.AVA.Implementations;
 
 import com.server.AVA.Models.Insights;
 import com.server.AVA.Repos.InsightsRepository;
@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
