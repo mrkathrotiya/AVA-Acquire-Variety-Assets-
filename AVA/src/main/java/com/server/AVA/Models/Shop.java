@@ -3,13 +3,15 @@ package com.server.AVA.Models;
 import com.server.AVA.Models.enums.AreaType;
 import com.server.AVA.Models.enums.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Entity
-@Getter
-@Setter
-public class Shop {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Shop implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

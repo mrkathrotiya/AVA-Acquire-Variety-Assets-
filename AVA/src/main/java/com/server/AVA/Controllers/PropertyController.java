@@ -1,14 +1,12 @@
 package com.server.AVA.Controllers;
 
+import com.server.AVA.Models.*;
 import com.server.AVA.Models.DTOs.PropertyDTOs.*;
-import com.server.AVA.Models.Property;
-import com.server.AVA.Models.Seller;
-import com.server.AVA.Models.Sizes;
-import com.server.AVA.Models.User;
 import com.server.AVA.Repos.PropertyRepository;
 import com.server.AVA.Repos.SellerRepository;
 import com.server.AVA.Repos.SizesRepository;
 import com.server.AVA.Services.PropertyService;
+import com.server.AVA.Services.PropertyTypeServices.LandService;
 import com.server.AVA.Services.PropertyTypeServices.SizesService;
 import com.server.AVA.Services.UserService;
 import lombok.AllArgsConstructor;
@@ -32,6 +30,8 @@ public class PropertyController {
     private final PropertyService propertyService;
     private final UserService userService;
     private final SellerRepository sellerRepository;
+
+    private final LandService landService;
 
     @PostMapping("/add")
     public ResponseEntity<PropertyDTO> createProperty(@RequestHeader("Authorization") String token,
@@ -121,6 +121,7 @@ public class PropertyController {
         }
         return ResponseEntity.badRequest().body("PropertyId should not be 0");
     }
+
 
 
 }

@@ -9,6 +9,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +21,9 @@ import java.util.Optional;
 public class LandServiceImpl implements LandService {
     private static final Logger log = LoggerFactory.getLogger(LandServiceImpl.class);
     private final LandRepository landRepository;
+
     @Override
+    @Cacheable(value = "LAND", key = "#propertyId")
     public Land getLandByPropertyId(Long propertyId) throws Exception {
         log.info("Entered to get land method");
         Land land= landRepository.findByPropertyId(propertyId)
@@ -44,6 +49,7 @@ public class LandServiceImpl implements LandService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "LAND", key = "#propertyId")
     public void deleteLand(Long propertyId) throws Exception {
         landRepository.findByPropertyId(propertyId)
                 .ifPresentOrElse(landRepository::delete,
@@ -52,14 +58,15 @@ public class LandServiceImpl implements LandService {
 
     @Override
     @Transactional
-    public void updateLand(LandDTO landDTO, Long propertyId) throws Exception {
+    @CachePut(value = "LAND", key = "#propertyId")
+    public Land updateLand(LandDTO landDTO, Long propertyId) throws Exception {
         log.info("LAND SERVICE: Entered to update land");
         Land land = getLandByPropertyId(propertyId);
         log.info("LAND SERVICE: Land fetched");
         Optional.ofNullable(landDTO.getArea()).ifPresent(land::setArea);
         Optional.ofNullable(landDTO.getLandType()).ifPresent(land::setLandType);
         log.info("LAND SERVICE: attribute settled");
-        landRepository.save(land);
         log.info("LAND SERVICE: Land updated");
+        return landRepository.save(land);
     }
 }

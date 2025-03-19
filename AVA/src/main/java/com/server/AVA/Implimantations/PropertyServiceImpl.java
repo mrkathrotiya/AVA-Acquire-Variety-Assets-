@@ -12,6 +12,7 @@ import com.server.AVA.Services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
@@ -80,13 +81,15 @@ public class PropertyServiceImpl implements PropertyService {
             Objects.requireNonNull(propertyId);
             Property property1 = propertyRepository.findById(propertyId).orElseThrow(() -> new EntityNotFoundException("not found!!"));
             if (property1 != null) {
-                redisService.set(Objects.requireNonNull(String.valueOf(property1.getId())), property1, 300L);
+                redisService.set(Objects.requireNonNull(String.valueOf(property1.getId())), property1, 600L);
             }
             return property1;
         }
     }
 
     @Override
+//    @Cacheable(value = "propertyResponse", key = "#propertyId")
+    @Transactional
     public PropertyResponse getWholePropertyById(Long propertyId) throws Exception {
         PropertyResponse propertyResponse= redisService.get("WP"+propertyId,PropertyResponse.class);
         if (propertyResponse != null) return  propertyResponse;
@@ -94,11 +97,18 @@ public class PropertyServiceImpl implements PropertyService {
             Property property = getPropertyById(propertyId);
             if (property != null) {
                 PropertyResponse propertyResponse1 = getPropertyResponse(property);
-                redisService.set("WP"+propertyId,propertyResponse1,300L);
+                redisService.set("WP"+propertyId,propertyResponse1,600L);
                 return propertyResponse1;
             }
             return null;
         }
+//        try {
+//            Property property = getPropertyById(propertyId);
+//            return getPropertyResponse(Objects.requireNonNull(property));
+//        }catch (EntityNotFoundException e){
+//            log.error("Exception occurs: {}", e);
+//         return null;
+//        }
     }
 
     @Override

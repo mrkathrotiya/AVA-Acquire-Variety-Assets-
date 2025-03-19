@@ -27,7 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-test:7.0.0-M2'
-
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -40,20 +40,20 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	//junit
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
 
+	//JDBC
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 	implementation 'mysql:mysql-connector-java:8.0.33'
-	implementation 'org.hibernate:hibernate-core:6.6.11.Final'
 
-	testImplementation 'org.junit.jupiter:junit-jupiter'
+    //hibernate
+	implementation 'org.hibernate:hibernate-core:6.6.11.Final'
 
 	//for JWT
 	implementation 'io.jsonwebtoken:jjwt:0.12.6'
@@ -64,6 +64,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.4.3'
 
 	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-hibernate-6:3.23.5'
 }

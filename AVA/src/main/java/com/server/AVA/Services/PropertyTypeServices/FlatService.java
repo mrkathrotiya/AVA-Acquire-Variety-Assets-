@@ -9,5 +9,5 @@ public interface FlatService {
     Flat getFlatByPropertyId(Long propertyId) throws Exception;
     void saveFlat(FlatDTO flatDTO, Long propertyId) throws Exception;
     void deleteFlat(Long propertyId) throws Exception;
-    void updateFlat(FlatDTO flatDTO, Long propertyId) throws Exception;
+    Flat updateFlat(FlatDTO flatDTO, Long propertyId) throws Exception;
 }

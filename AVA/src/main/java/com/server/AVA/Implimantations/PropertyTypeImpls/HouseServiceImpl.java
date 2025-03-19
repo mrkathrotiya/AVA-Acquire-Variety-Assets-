@@ -15,6 +15,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,6 +30,7 @@ public class HouseServiceImpl implements HouseService {
     private final HomeService homeService;
 
     @Override
+    @Cacheable(value = "HOUSE", key = "#propertyId")
     public House getHouseByPropertyId(Long propertyId) throws Exception {
         return houseRepository.findByPropertyId(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -52,6 +56,7 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "HOUSE", key = "#propertyId")
     public void deleteHouse(Long propertyId) throws Exception {
         House house = getHouseByPropertyId(propertyId);
         if (house == null) {
@@ -70,7 +75,9 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public void updateHouse(HouseDTO houseDTO, Long propertyId) throws Exception {
+    @Transactional
+    @CachePut(value = "HOUSE", key = "#propertyId")
+    public House updateHouse(HouseDTO houseDTO, Long propertyId) throws Exception {
         log.info("HOUSE SERVICE: Entered to update house!");
         House house = getHouseByPropertyId(propertyId);
         log.info("FLAT SERVICE: House fetched!");
@@ -80,6 +87,6 @@ public class HouseServiceImpl implements HouseService {
         if (houseDTO.getHomeDTO() != null){
             house.setHome(homeService.updateHome(houseDTO.getHomeDTO(),house.getHome().getId()));
         }
-        houseRepository.save(house);
+        return houseRepository.save(house);
     }
 }

@@ -17,6 +17,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,6 +33,7 @@ public class FlatServiceImpl implements FlatService {
     private final RedisService redisService;
 
     @Override
+    @Cacheable(value = "FLAT", key = "#propertyId")
     public Flat getFlatByPropertyId(Long propertyId) throws Exception {
         return flatRepository.findByPropertyId(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -54,6 +58,7 @@ public class FlatServiceImpl implements FlatService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "FLAT", key = "#propertyId")
     public void deleteFlat(Long propertyId) throws Exception {
         log.info("Entered to delete flat");
         Flat flat = getFlatByPropertyId(propertyId);
@@ -75,7 +80,8 @@ public class FlatServiceImpl implements FlatService {
 
     @Override
     @Transactional
-    public void updateFlat(FlatDTO flatDTO, Long propertyId) throws Exception {
+    @CachePut(value = "FLAT", key = "#propertyId")
+    public Flat updateFlat(FlatDTO flatDTO, Long propertyId) throws Exception {
         log.info("FLAT SERVICE: Entered to update flat!");
         Flat flat = getFlatByPropertyId(propertyId);
         log.info("FLAT SERVICE: Flat fetched!");
@@ -84,6 +90,6 @@ public class FlatServiceImpl implements FlatService {
         if (flatDTO.getHomeDTO() != null){
             flat.setHome(homeService.updateHome(flatDTO.getHomeDTO(),flat.getHome().getId()));
         }
-        flatRepository.save(flat);
+        return flatRepository.save(flat);
     }
 }

@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +21,9 @@ import java.util.Optional;
 public class SizesServiceImpl implements SizesService {
     private static final Logger log = LoggerFactory.getLogger(SizesServiceImpl.class);
     private final SizesRepository sizesRepository;
+
     @Override
+    @Cacheable(value = "SIZE", key = "#sizeId")
     public Sizes getSizesById(Long sizeId) {
         return sizesRepository.findSizesById(sizeId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -29,6 +33,7 @@ public class SizesServiceImpl implements SizesService {
 
     @Override
     @Transactional
+    @CachePut(value = "SIZE", key = "#sizesId")
     public void updateSizes(Long sizesId, SizeDTO sizeDTO) {
         log.info("SIZES SERVICE: Entered to update sizes");
         Sizes sizes = getSizesById(sizesId);

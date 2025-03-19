@@ -7,5 +7,5 @@ public interface LandService{
     Land getLandByPropertyId(Long propertyId) throws Exception;
     void saveLand(LandDTO landDTO, Long propertyId) throws Exception;
     void deleteLand(Long propertyId) throws Exception;
-    void updateLand(LandDTO landDTO, Long propertyId) throws Exception;
+    Land updateLand(LandDTO landDTO, Long propertyId) throws Exception;
 }

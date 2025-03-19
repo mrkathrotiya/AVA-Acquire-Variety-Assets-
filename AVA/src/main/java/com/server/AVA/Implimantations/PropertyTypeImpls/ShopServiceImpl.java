@@ -1,18 +1,17 @@
 package com.server.AVA.Implimantations.PropertyTypeImpls;
 
-import com.server.AVA.Models.DTOs.PropertyDTOs.LandDTO;
 import com.server.AVA.Models.DTOs.PropertyDTOs.ShopDTO;
-import com.server.AVA.Models.Land;
 import com.server.AVA.Models.Shop;
-import com.server.AVA.Repos.LandRepository;
 import com.server.AVA.Repos.ShopRepository;
-import com.server.AVA.Services.PropertyTypeServices.LandService;
 import com.server.AVA.Services.PropertyTypeServices.ShopService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,6 +22,7 @@ public class ShopServiceImpl implements ShopService {
     private static final Logger log = LoggerFactory.getLogger(ShopServiceImpl.class);
     private final ShopRepository shopRepository;
     @Override
+    @Cacheable(value = "SHOP", key = "#propertyId")
     public Shop getShopByPropertyId(Long propertyId) throws Exception {
         return shopRepository.findByPropertyId(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -45,6 +45,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "SHOP", key = "#propertyId")
     public void deleteShop(Long propertyId) throws Exception {
         shopRepository.findByPropertyId(propertyId)
                 .ifPresentOrElse(shopRepository::delete,
@@ -53,7 +54,8 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional
-    public void updateShop(ShopDTO shopDTO, Long propertyId) throws Exception {
+    @CachePut(value = "SHOP", key = "#propertyId")
+    public Shop updateShop(ShopDTO shopDTO, Long propertyId) throws Exception {
         log.info("SHOP SERVICE: Entered to update shop!");
         Shop shop = getShopByPropertyId(propertyId);
         log.info("SHOP SERVICE: Shop fetched!");
@@ -65,5 +67,6 @@ public class ShopServiceImpl implements ShopService {
         log.info("SHOP SERVICE: Parameter settled!");
         shopRepository.save(shop);
         log.info("SHOP SERVICE: Shop updated!");
+        return shop;
     }
 }

@@ -1,7 +1,8 @@
 package com.server.AVA.Config;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
-import org.springframework.cache.CacheManager;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -18,12 +19,51 @@ import java.time.Duration;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-
         return redisTemplate;
     }
+//@Bean
+//public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+//    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//    redisTemplate.setConnectionFactory(redisConnectionFactory);
+//
+//    // Store keys as String
+//    redisTemplate.setKeySerializer(new StringRedisSerializer());
+//
+//    // Store values as JSON (Fixes binary format issue)
+//    redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+//    redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+//    redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+//
+//    return redisTemplate;
+//}
+
+//    @Bean
+//    public RedisCacheConfiguration cacheConfiguration() {
+//        return RedisCacheConfiguration.defaultCacheConfig()
+//                .entryTtl(Duration.ofMinutes(10))
+//                .disableCachingNullValues();
+//    }
+
+    @Bean
+    public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(10))  // Set cache expiration time
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        
+
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(cacheConfig)
+                .build();
+    }
+
+
+
 }

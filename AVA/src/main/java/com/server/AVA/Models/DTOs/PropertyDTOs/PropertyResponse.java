@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class PropertyResponse {
+public class PropertyResponse{
     private PropertyDTO propertyDTO;
     private InsightsDTO insightsDTO;
     private ShopDTO shopDTO;

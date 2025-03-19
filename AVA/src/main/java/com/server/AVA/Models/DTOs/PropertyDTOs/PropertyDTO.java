@@ -8,13 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class PropertyDTO {
-    private List<String> propertyImages;
-    private List<String> paperImages;
+public class PropertyDTO{
+    private List<String> propertyImages = new ArrayList<>();
+    private List<String> paperImages = new ArrayList<>();
     private PropertyType propertyType;
     private Long price;
     private Long rent;

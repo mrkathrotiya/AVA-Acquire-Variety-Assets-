@@ -9,5 +9,5 @@ public interface ShopService {
     Shop getShopByPropertyId(Long propertyId) throws Exception;
     void saveShop(ShopDTO shopDTO, Long propertyId) throws Exception;
     void deleteShop(Long propertyId) throws Exception;
-    void updateShop(ShopDTO shopDTO, Long propertyId) throws Exception;
+    Shop updateShop(ShopDTO shopDTO, Long propertyId) throws Exception;
 }

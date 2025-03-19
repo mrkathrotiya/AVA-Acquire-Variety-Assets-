@@ -6,6 +6,8 @@ import com.server.AVA.Services.PropertyTypeServices.InsightsService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class InsightsServiceImpl implements InsightsService {
     private final InsightsRepository insightsRepository;
+    
     @Override
+    @Cacheable(value = "INSIGHT", key = "#insightsId")
     public Insights getInsights(Long insightsId) {
         return insightsRepository.findById(insightsId).orElseThrow(
                 () -> new EntityNotFoundException("Insights not found with Id: "+insightsId)
@@ -31,6 +35,7 @@ public class InsightsServiceImpl implements InsightsService {
 
     @Transactional
     @Override
+    @CacheEvict(value = "INSIGHT", key = "#insightsId")
     public void deleteInsights(Insights insights) {
         insightsRepository.delete(Objects.requireNonNull(insights));
     }

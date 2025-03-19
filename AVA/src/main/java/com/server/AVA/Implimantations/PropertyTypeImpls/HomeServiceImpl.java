@@ -16,6 +16,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,8 +32,9 @@ import java.util.stream.Collectors;
 public class HomeServiceImpl implements HomeService {
     private static final Logger log = LoggerFactory.getLogger(HomeServiceImpl.class);
     private final HomeRepository homeRepository;
-    private final SizesService sizesService;
+
     @Override
+    @Cacheable(value = "HOME", key = "#homeId")
     public Home getHomeById(Long homeId) throws Exception {
         Home home = homeRepository.findHomeById(homeId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -69,6 +73,7 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "HOME", key = "#homeId")
     public void deleteHome(Long homeId) throws Exception {
         log.info("Entered to delete home");
         if (!homeRepository.existsById(homeId)) {
@@ -85,6 +90,7 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     @Transactional
+    @CachePut(value = "HOME", key = "#homeId")
     public Home updateHome(HomeDTO homeDTO,Long homeId) throws Exception {
         log.info("HOME SERVICE: Entered to update home!");
         Home home = getHomeById(homeId);
